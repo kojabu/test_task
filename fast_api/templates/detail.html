@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+</head>
+<body>
+    <h1>User Details</h1>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+    <p><strong>Name:</strong> {{ user.name }}</p>
+    <p><strong>Surname:</strong> {{ user.surname }}</p>
+    <form action="/delete/html/{{ user.id }}" method="post">
+        <!-- Hidden field to simulate DELETE method -->
+        <input type="hidden" name="_method" value="delete">
+        
+        <button type="submit">Delete User</button>
+    </form>
+    <a href="/edit/{{ user.id }}">Change</a>
+</body>
+</html>
