@@ -1,6 +1,4 @@
-Here's a sample README file in Russian for your test task:
 
----
 
 # Тестовое задание
 
