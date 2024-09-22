@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String
-from database import Base
+from dependencies import Base
+from sqlalchemy.ext.declarative import declarative_base
 
+# Create the base class for declarative models
+Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 

@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
-from database import SessionLocal
-from models import User
+from dependencies import get_db
+from models.user import User
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import jwt
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter(
@@ -35,17 +35,12 @@ class Token(BaseModel):
     access_token: str 
     token_type: str   
     
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
         
 db_dependency = Annotated[Session, Depends(get_db)]
 
 @router.post('/',status_code=status.HTTP_201_CREATED)
-async def create_user(request: Request,\
+async def user_sign_up(request: Request,\
                     db: db_dependency,
                     create_user_request: CreateUserRequest):
     create_user_model = User(
@@ -64,7 +59,7 @@ async def create_user(request: Request,\
 @router.post('/token', response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
-    user = authenticate_user(form_data.username, form_data.password, db)
+    user = user_login(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user.')
@@ -74,7 +69,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     
     
     
-def authenticate_user(username: str, password: str, db):
+def user_login(username: str, password: str, db):
     user = db.query(User).filter(User.email == username).first()
     if not user:
         return False
